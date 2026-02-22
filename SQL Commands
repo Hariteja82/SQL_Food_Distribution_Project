@@ -1,0 +1,1299 @@
+Great 🔥 Let’s build a **Food Distribution Management System** and cover **almost all important SQL commands** (DDL, DML, DQL, TCL, DCL) using a real Snowflake-style project.
+
+This will help you for:
+
+* Interviews
+* Real-time projects
+* Snowflake practice
+
+---
+
+# 🏢 Food Distribution Management System – SQL Commands
+
+---
+
+# 1️⃣ DDL (Data Definition Language)
+
+## ✅ CREATE DATABASE
+
+```sql
+CREATE DATABASE FOOD_DB;
+```
+
+---
+
+## ✅ USE DATABASE
+
+```sql
+USE DATABASE FOOD_DB;
+```
+
+---
+
+## ✅ CREATE SCHEMA
+
+```sql
+CREATE SCHEMA MANAGEMENT;
+```
+
+---
+
+## ✅ USE SCHEMA
+
+```sql
+USE SCHEMA FOOD_DB.MANAGEMENT;
+```
+
+---
+
+## ✅ CREATE TABLES
+
+### 1️⃣ Suppliers
+
+```sql
+CREATE TABLE SUPPLIERS (
+    SUPPLIER_ID INT,
+    SUPPLIER_NAME STRING,
+    CONTACT_NUMBER STRING,
+    CITY STRING
+);
+```
+
+---
+
+### 2️⃣ Food Items
+
+```sql
+CREATE TABLE FOOD_ITEMS (
+    FOOD_ID INT,
+    FOOD_NAME STRING,
+    CATEGORY STRING,
+    PRICE NUMBER(10,2),
+    SUPPLIER_ID INT
+);
+```
+
+---
+
+### 3️⃣ Customers
+
+```sql
+CREATE TABLE CUSTOMERS (
+    CUSTOMER_ID INT,
+    CUSTOMER_NAME STRING,
+    CITY STRING,
+    PHONE STRING
+);
+```
+
+---
+
+### 4️⃣ Orders
+
+```sql
+CREATE TABLE ORDERS (
+    ORDER_ID INT,
+    CUSTOMER_ID INT,
+    ORDER_DATE DATE,
+    STATUS STRING,
+    TOTAL_AMOUNT NUMBER(10,2)
+);
+```
+
+---
+
+### 5️⃣ Order Details
+
+```sql
+CREATE TABLE ORDER_DETAILS (
+    ORDER_DETAIL_ID INT,
+    ORDER_ID INT,
+    FOOD_ID INT,
+    QUANTITY INT,
+    AMOUNT NUMBER(10,2)
+);
+```
+
+---
+
+## ✅ ALTER TABLE
+
+```sql
+ALTER TABLE CUSTOMERS
+ADD EMAIL STRING;
+```
+
+---
+
+## ✅ RENAME TABLE
+
+```sql
+ALTER TABLE FOOD_ITEMS
+RENAME TO PRODUCTS;
+```
+
+---
+
+## ✅ DROP TABLE
+
+```sql
+DROP TABLE PRODUCTS;
+```
+
+---
+
+# 2️⃣ DML (Data Manipulation Language)
+
+## ✅ INSERT
+
+```sql
+INSERT INTO SUPPLIERS
+VALUES (1, 'Fresh Farms', '9876543210', 'Bangalore');
+```
+
+---
+
+## ✅ INSERT Multiple Rows
+
+```sql
+INSERT INTO CUSTOMERS VALUES
+(1, 'Ravi', 'Hyderabad', '9000000001'),
+(2, 'Sita', 'Bangalore', '9000000002');
+```
+
+---
+
+## ✅ UPDATE
+
+```sql
+UPDATE ORDERS
+SET STATUS = 'Delivered'
+WHERE ORDER_ID = 101;
+```
+
+---
+
+## ✅ DELETE
+
+```sql
+DELETE FROM CUSTOMERS
+WHERE CUSTOMER_ID = 2;
+```
+
+---
+
+## ✅ MERGE (Very Important in Snowflake)
+
+```sql
+MERGE INTO CUSTOMERS T
+USING NEW_CUSTOMERS S
+ON T.CUSTOMER_ID = S.CUSTOMER_ID
+WHEN MATCHED THEN
+UPDATE SET T.CITY = S.CITY
+WHEN NOT MATCHED THEN
+INSERT VALUES (S.CUSTOMER_ID, S.CUSTOMER_NAME, S.CITY, S.PHONE);
+```
+
+---
+
+# 3️⃣ DQL (Data Query Language)
+
+## ✅ SELECT
+
+```sql
+SELECT * FROM CUSTOMERS;
+```
+
+---
+
+## ✅ WHERE
+
+```sql
+SELECT * 
+FROM ORDERS
+WHERE STATUS = 'Delivered';
+```
+
+---
+
+## ✅ ORDER BY
+
+```sql
+SELECT * 
+FROM FOOD_ITEMS
+ORDER BY PRICE DESC;
+```
+
+---
+
+## ✅ GROUP BY
+
+```sql
+SELECT STATUS, COUNT(*) AS TOTAL_ORDERS
+FROM ORDERS
+GROUP BY STATUS;
+```
+
+---
+
+## ✅ HAVING
+
+```sql
+SELECT CUSTOMER_ID, COUNT(*) AS TOTAL_ORDERS
+FROM ORDERS
+GROUP BY CUSTOMER_ID
+HAVING COUNT(*) > 5;
+```
+
+---
+
+## ✅ JOIN
+
+```sql
+SELECT C.CUSTOMER_NAME, O.ORDER_ID, O.TOTAL_AMOUNT
+FROM CUSTOMERS C
+JOIN ORDERS O
+ON C.CUSTOMER_ID = O.CUSTOMER_ID;
+```
+
+---
+
+## ✅ LEFT JOIN
+
+```sql
+SELECT C.CUSTOMER_NAME, O.ORDER_ID
+FROM CUSTOMERS C
+LEFT JOIN ORDERS O
+ON C.CUSTOMER_ID = O.CUSTOMER_ID;
+```
+
+---
+
+## ✅ SUBQUERY
+
+```sql
+SELECT *
+FROM CUSTOMERS
+WHERE CUSTOMER_ID IN (
+    SELECT CUSTOMER_ID
+    FROM ORDERS
+    WHERE TOTAL_AMOUNT > 1000
+);
+```
+
+---
+
+## ✅ CASE Statement
+
+```sql
+SELECT ORDER_ID,
+       CASE
+           WHEN TOTAL_AMOUNT > 1000 THEN 'High Value'
+           ELSE 'Normal'
+       END AS ORDER_TYPE
+FROM ORDERS;
+```
+
+---
+
+## ✅ VIEW
+
+```sql
+CREATE VIEW DELIVERED_ORDERS AS
+SELECT *
+FROM ORDERS
+WHERE STATUS = 'Delivered';
+```
+
+---
+
+## ✅ WINDOW FUNCTION
+
+```sql
+SELECT CUSTOMER_ID,
+       TOTAL_AMOUNT,
+       RANK() OVER (ORDER BY TOTAL_AMOUNT DESC) AS RANKING
+FROM ORDERS;
+```
+
+---
+
+# 4️⃣ DCL (Data Control Language)
+
+## ✅ CREATE ROLE
+
+```sql
+CREATE ROLE FOOD_ADMIN;
+```
+
+---
+
+## ✅ GRANT
+
+```sql
+GRANT USAGE ON DATABASE FOOD_DB TO ROLE FOOD_ADMIN;
+GRANT USAGE ON SCHEMA FOOD_DB.MANAGEMENT TO ROLE FOOD_ADMIN;
+GRANT SELECT ON ALL TABLES IN SCHEMA FOOD_DB.MANAGEMENT TO ROLE FOOD_ADMIN;
+```
+
+---
+
+## ✅ REVOKE
+
+```sql
+REVOKE SELECT ON ALL TABLES IN SCHEMA FOOD_DB.MANAGEMENT FROM ROLE FOOD_ADMIN;
+```
+
+---
+
+# 5️⃣ TCL (Transaction Control Language)
+
+## ✅ BEGIN
+
+```sql
+BEGIN;
+```
+
+---
+
+## ✅ COMMIT
+
+```sql
+COMMIT;
+```
+
+---
+
+## ✅ ROLLBACK
+
+```sql
+ROLLBACK;
+```
+
+---
+
+# 6️⃣ Advanced Snowflake Commands
+
+## ✅ SHOW TABLES
+
+```sql
+SHOW TABLES;
+```
+
+---
+
+## ✅ DESCRIBE TABLE
+
+```sql
+DESC TABLE ORDERS;
+```
+
+---
+
+## ✅ CLONE (Snowflake Special)
+
+```sql
+CREATE TABLE ORDERS_BACKUP CLONE ORDERS;
+```
+
+---
+
+## ✅ TIME TRAVEL
+
+```sql
+SELECT *
+FROM ORDERS
+AT (TIMESTAMP => '2026-02-20 10:00:00');
+```
+
+---
+
+# 🎯 This Covers
+
+✔ Database creation
+✔ Schema usage
+✔ Table creation
+✔ Insert / Update / Delete
+✔ Joins
+✔ Grouping
+✔ Views
+✔ Roles & Permissions
+✔ Transactions
+✔ Snowflake-specific features
+
+---
+
+If you want next level, I can give:
+
+* 🔥 Complete 200-row data script
+* 🔥 Real interview SQL questions from this project
+* 🔥 Stored procedures + tasks
+* 🔥 End-to-end Snowflake project architecture
+
+Tell me what level you want 🚀
+Great 🔥 Let’s build a **Food Distribution Management System** and cover **almost all important SQL commands** (DDL, DML, DQL, TCL, DCL) using a real Snowflake-style project.
+
+This will help you for:
+
+* Interviews
+* Real-time projects
+* Snowflake practice
+
+---
+
+# 🏢 Food Distribution Management System – SQL Commands
+
+---
+
+# 1️⃣ DDL (Data Definition Language)
+
+## ✅ CREATE DATABASE
+
+```sql
+CREATE DATABASE FOOD_DB;
+```
+
+---
+
+## ✅ USE DATABASE
+
+```sql
+USE DATABASE FOOD_DB;
+```
+
+---
+
+## ✅ CREATE SCHEMA
+
+```sql
+CREATE SCHEMA MANAGEMENT;
+```
+
+---
+
+## ✅ USE SCHEMA
+
+```sql
+USE SCHEMA FOOD_DB.MANAGEMENT;
+```
+
+---
+
+## ✅ CREATE TABLES
+
+### 1️⃣ Suppliers
+
+```sql
+CREATE TABLE SUPPLIERS (
+    SUPPLIER_ID INT,
+    SUPPLIER_NAME STRING,
+    CONTACT_NUMBER STRING,
+    CITY STRING
+);
+```
+
+---
+
+### 2️⃣ Food Items
+
+```sql
+CREATE TABLE FOOD_ITEMS (
+    FOOD_ID INT,
+    FOOD_NAME STRING,
+    CATEGORY STRING,
+    PRICE NUMBER(10,2),
+    SUPPLIER_ID INT
+);
+```
+
+---
+
+### 3️⃣ Customers
+
+```sql
+CREATE TABLE CUSTOMERS (
+    CUSTOMER_ID INT,
+    CUSTOMER_NAME STRING,
+    CITY STRING,
+    PHONE STRING
+);
+```
+
+---
+
+### 4️⃣ Orders
+
+```sql
+CREATE TABLE ORDERS (
+    ORDER_ID INT,
+    CUSTOMER_ID INT,
+    ORDER_DATE DATE,
+    STATUS STRING,
+    TOTAL_AMOUNT NUMBER(10,2)
+);
+```
+
+---
+
+### 5️⃣ Order Details
+
+```sql
+CREATE TABLE ORDER_DETAILS (
+    ORDER_DETAIL_ID INT,
+    ORDER_ID INT,
+    FOOD_ID INT,
+    QUANTITY INT,
+    AMOUNT NUMBER(10,2)
+);
+```
+
+---
+
+## ✅ ALTER TABLE
+
+```sql
+ALTER TABLE CUSTOMERS
+ADD EMAIL STRING;
+```
+
+---
+
+## ✅ RENAME TABLE
+
+```sql
+ALTER TABLE FOOD_ITEMS
+RENAME TO PRODUCTS;
+```
+
+---
+
+## ✅ DROP TABLE
+
+```sql
+DROP TABLE PRODUCTS;
+```
+
+---
+
+# 2️⃣ DML (Data Manipulation Language)
+
+## ✅ INSERT
+
+```sql
+INSERT INTO SUPPLIERS
+VALUES (1, 'Fresh Farms', '9876543210', 'Bangalore');
+```
+
+---
+
+## ✅ INSERT Multiple Rows
+
+```sql
+INSERT INTO CUSTOMERS VALUES
+(1, 'Ravi', 'Hyderabad', '9000000001'),
+(2, 'Sita', 'Bangalore', '9000000002');
+```
+
+---
+
+## ✅ UPDATE
+
+```sql
+UPDATE ORDERS
+SET STATUS = 'Delivered'
+WHERE ORDER_ID = 101;
+```
+
+---
+
+## ✅ DELETE
+
+```sql
+DELETE FROM CUSTOMERS
+WHERE CUSTOMER_ID = 2;
+```
+
+---
+
+## ✅ MERGE (Very Important in Snowflake)
+
+```sql
+MERGE INTO CUSTOMERS T
+USING NEW_CUSTOMERS S
+ON T.CUSTOMER_ID = S.CUSTOMER_ID
+WHEN MATCHED THEN
+UPDATE SET T.CITY = S.CITY
+WHEN NOT MATCHED THEN
+INSERT VALUES (S.CUSTOMER_ID, S.CUSTOMER_NAME, S.CITY, S.PHONE);
+```
+
+---
+
+# 3️⃣ DQL (Data Query Language)
+
+## ✅ SELECT
+
+```sql
+SELECT * FROM CUSTOMERS;
+```
+
+---
+
+## ✅ WHERE
+
+```sql
+SELECT * 
+FROM ORDERS
+WHERE STATUS = 'Delivered';
+```
+
+---
+
+## ✅ ORDER BY
+
+```sql
+SELECT * 
+FROM FOOD_ITEMS
+ORDER BY PRICE DESC;
+```
+
+---
+
+## ✅ GROUP BY
+
+```sql
+SELECT STATUS, COUNT(*) AS TOTAL_ORDERS
+FROM ORDERS
+GROUP BY STATUS;
+```
+
+---
+
+## ✅ HAVING
+
+```sql
+SELECT CUSTOMER_ID, COUNT(*) AS TOTAL_ORDERS
+FROM ORDERS
+GROUP BY CUSTOMER_ID
+HAVING COUNT(*) > 5;
+```
+
+---
+
+## ✅ JOIN
+
+```sql
+SELECT C.CUSTOMER_NAME, O.ORDER_ID, O.TOTAL_AMOUNT
+FROM CUSTOMERS C
+JOIN ORDERS O
+ON C.CUSTOMER_ID = O.CUSTOMER_ID;
+```
+
+---
+
+## ✅ LEFT JOIN
+
+```sql
+SELECT C.CUSTOMER_NAME, O.ORDER_ID
+FROM CUSTOMERS C
+LEFT JOIN ORDERS O
+ON C.CUSTOMER_ID = O.CUSTOMER_ID;
+```
+
+---
+
+## ✅ SUBQUERY
+
+```sql
+SELECT *
+FROM CUSTOMERS
+WHERE CUSTOMER_ID IN (
+    SELECT CUSTOMER_ID
+    FROM ORDERS
+    WHERE TOTAL_AMOUNT > 1000
+);
+```
+
+---
+
+## ✅ CASE Statement
+
+```sql
+SELECT ORDER_ID,
+       CASE
+           WHEN TOTAL_AMOUNT > 1000 THEN 'High Value'
+           ELSE 'Normal'
+       END AS ORDER_TYPE
+FROM ORDERS;
+```
+
+---
+
+## ✅ VIEW
+
+```sql
+CREATE VIEW DELIVERED_ORDERS AS
+SELECT *
+FROM ORDERS
+WHERE STATUS = 'Delivered';
+```
+
+---
+
+## ✅ WINDOW FUNCTION
+
+```sql
+SELECT CUSTOMER_ID,
+       TOTAL_AMOUNT,
+       RANK() OVER (ORDER BY TOTAL_AMOUNT DESC) AS RANKING
+FROM ORDERS;
+```
+
+---
+
+# 4️⃣ DCL (Data Control Language)
+
+## ✅ CREATE ROLE
+
+```sql
+CREATE ROLE FOOD_ADMIN;
+```
+
+---
+
+## ✅ GRANT
+
+```sql
+GRANT USAGE ON DATABASE FOOD_DB TO ROLE FOOD_ADMIN;
+GRANT USAGE ON SCHEMA FOOD_DB.MANAGEMENT TO ROLE FOOD_ADMIN;
+GRANT SELECT ON ALL TABLES IN SCHEMA FOOD_DB.MANAGEMENT TO ROLE FOOD_ADMIN;
+```
+
+---
+
+## ✅ REVOKE
+
+```sql
+REVOKE SELECT ON ALL TABLES IN SCHEMA FOOD_DB.MANAGEMENT FROM ROLE FOOD_ADMIN;
+```
+
+---
+
+# 5️⃣ TCL (Transaction Control Language)
+
+## ✅ BEGIN
+
+```sql
+BEGIN;
+```
+
+---
+
+## ✅ COMMIT
+
+```sql
+COMMIT;
+```
+
+---
+
+## ✅ ROLLBACK
+
+```sql
+ROLLBACK;
+```
+
+---
+
+# 6️⃣ Advanced Snowflake Commands
+
+## ✅ SHOW TABLES
+
+```sql
+SHOW TABLES;
+```
+
+---
+
+## ✅ DESCRIBE TABLE
+
+```sql
+DESC TABLE ORDERS;
+```
+
+---
+
+## ✅ CLONE (Snowflake Special)
+
+```sql
+CREATE TABLE ORDERS_BACKUP CLONE ORDERS;
+```
+
+---
+
+## ✅ TIME TRAVEL
+
+```sql
+SELECT *
+FROM ORDERS
+AT (TIMESTAMP => '2026-02-20 10:00:00');
+```
+
+---
+
+# 🎯 This Covers
+
+✔ Database creation
+✔ Schema usage
+✔ Table creation
+✔ Insert / Update / Delete
+✔ Joins
+✔ Grouping
+✔ Views
+✔ Roles & Permissions
+✔ Transactions
+✔ Snowflake-specific features
+
+---
+
+If you want next level, I can give:
+
+* 🔥 Complete 200-row data script
+* 🔥 Real interview SQL questions from this project
+* 🔥 Stored procedures + tasks
+* 🔥 End-to-end Snowflake project architecture
+
+Tell me what level you want 🚀
+Great 🔥 Let’s build a **Food Distribution Management System** and cover **almost all important SQL commands** (DDL, DML, DQL, TCL, DCL) using a real Snowflake-style project.
+
+This will help you for:
+
+* Interviews
+* Real-time projects
+* Snowflake practice
+
+---
+
+# 🏢 Food Distribution Management System – SQL Commands
+
+---
+
+# 1️⃣ DDL (Data Definition Language)
+
+## ✅ CREATE DATABASE
+
+```sql
+CREATE DATABASE FOOD_DB;
+```
+
+---
+
+## ✅ USE DATABASE
+
+```sql
+USE DATABASE FOOD_DB;
+```
+
+---
+
+## ✅ CREATE SCHEMA
+
+```sql
+CREATE SCHEMA MANAGEMENT;
+```
+
+---
+
+## ✅ USE SCHEMA
+
+```sql
+USE SCHEMA FOOD_DB.MANAGEMENT;
+```
+
+---
+
+## ✅ CREATE TABLES
+
+### 1️⃣ Suppliers
+
+```sql
+CREATE TABLE SUPPLIERS (
+    SUPPLIER_ID INT,
+    SUPPLIER_NAME STRING,
+    CONTACT_NUMBER STRING,
+    CITY STRING
+);
+```
+
+---
+
+### 2️⃣ Food Items
+
+```sql
+CREATE TABLE FOOD_ITEMS (
+    FOOD_ID INT,
+    FOOD_NAME STRING,
+    CATEGORY STRING,
+    PRICE NUMBER(10,2),
+    SUPPLIER_ID INT
+);
+```
+
+---
+
+### 3️⃣ Customers
+
+```sql
+CREATE TABLE CUSTOMERS (
+    CUSTOMER_ID INT,
+    CUSTOMER_NAME STRING,
+    CITY STRING,
+    PHONE STRING
+);
+```
+
+---
+
+### 4️⃣ Orders
+
+```sql
+CREATE TABLE ORDERS (
+    ORDER_ID INT,
+    CUSTOMER_ID INT,
+    ORDER_DATE DATE,
+    STATUS STRING,
+    TOTAL_AMOUNT NUMBER(10,2)
+);
+```
+
+---
+
+### 5️⃣ Order Details
+
+```sql
+CREATE TABLE ORDER_DETAILS (
+    ORDER_DETAIL_ID INT,
+    ORDER_ID INT,
+    FOOD_ID INT,
+    QUANTITY INT,
+    AMOUNT NUMBER(10,2)
+);
+```
+
+---
+
+## ✅ ALTER TABLE
+
+```sql
+ALTER TABLE CUSTOMERS
+ADD EMAIL STRING;
+```
+
+---
+
+## ✅ RENAME TABLE
+
+```sql
+ALTER TABLE FOOD_ITEMS
+RENAME TO PRODUCTS;
+```
+
+---
+
+## ✅ DROP TABLE
+
+```sql
+DROP TABLE PRODUCTS;
+```
+
+---
+
+# 2️⃣ DML (Data Manipulation Language)
+
+## ✅ INSERT
+
+```sql
+INSERT INTO SUPPLIERS
+VALUES (1, 'Fresh Farms', '9876543210', 'Bangalore');
+```
+
+---
+
+## ✅ INSERT Multiple Rows
+
+```sql
+INSERT INTO CUSTOMERS VALUES
+(1, 'Ravi', 'Hyderabad', '9000000001'),
+(2, 'Sita', 'Bangalore', '9000000002');
+```
+
+---
+
+## ✅ UPDATE
+
+```sql
+UPDATE ORDERS
+SET STATUS = 'Delivered'
+WHERE ORDER_ID = 101;
+```
+
+---
+
+## ✅ DELETE
+
+```sql
+DELETE FROM CUSTOMERS
+WHERE CUSTOMER_ID = 2;
+```
+
+---
+
+## ✅ MERGE (Very Important in Snowflake)
+
+```sql
+MERGE INTO CUSTOMERS T
+USING NEW_CUSTOMERS S
+ON T.CUSTOMER_ID = S.CUSTOMER_ID
+WHEN MATCHED THEN
+UPDATE SET T.CITY = S.CITY
+WHEN NOT MATCHED THEN
+INSERT VALUES (S.CUSTOMER_ID, S.CUSTOMER_NAME, S.CITY, S.PHONE);
+```
+
+---
+
+# 3️⃣ DQL (Data Query Language)
+
+## ✅ SELECT
+
+```sql
+SELECT * FROM CUSTOMERS;
+```
+
+---
+
+## ✅ WHERE
+
+```sql
+SELECT * 
+FROM ORDERS
+WHERE STATUS = 'Delivered';
+```
+
+---
+
+## ✅ ORDER BY
+
+```sql
+SELECT * 
+FROM FOOD_ITEMS
+ORDER BY PRICE DESC;
+```
+
+---
+
+## ✅ GROUP BY
+
+```sql
+SELECT STATUS, COUNT(*) AS TOTAL_ORDERS
+FROM ORDERS
+GROUP BY STATUS;
+```
+
+---
+
+## ✅ HAVING
+
+```sql
+SELECT CUSTOMER_ID, COUNT(*) AS TOTAL_ORDERS
+FROM ORDERS
+GROUP BY CUSTOMER_ID
+HAVING COUNT(*) > 5;
+```
+
+---
+
+## ✅ JOIN
+
+```sql
+SELECT C.CUSTOMER_NAME, O.ORDER_ID, O.TOTAL_AMOUNT
+FROM CUSTOMERS C
+JOIN ORDERS O
+ON C.CUSTOMER_ID = O.CUSTOMER_ID;
+```
+
+---
+
+## ✅ LEFT JOIN
+
+```sql
+SELECT C.CUSTOMER_NAME, O.ORDER_ID
+FROM CUSTOMERS C
+LEFT JOIN ORDERS O
+ON C.CUSTOMER_ID = O.CUSTOMER_ID;
+```
+
+---
+
+## ✅ SUBQUERY
+
+```sql
+SELECT *
+FROM CUSTOMERS
+WHERE CUSTOMER_ID IN (
+    SELECT CUSTOMER_ID
+    FROM ORDERS
+    WHERE TOTAL_AMOUNT > 1000
+);
+```
+
+---
+
+## ✅ CASE Statement
+
+```sql
+SELECT ORDER_ID,
+       CASE
+           WHEN TOTAL_AMOUNT > 1000 THEN 'High Value'
+           ELSE 'Normal'
+       END AS ORDER_TYPE
+FROM ORDERS;
+```
+
+---
+
+## ✅ VIEW
+
+```sql
+CREATE VIEW DELIVERED_ORDERS AS
+SELECT *
+FROM ORDERS
+WHERE STATUS = 'Delivered';
+```
+
+---
+
+## ✅ WINDOW FUNCTION
+
+```sql
+SELECT CUSTOMER_ID,
+       TOTAL_AMOUNT,
+       RANK() OVER (ORDER BY TOTAL_AMOUNT DESC) AS RANKING
+FROM ORDERS;
+```
+
+---
+
+# 4️⃣ DCL (Data Control Language)
+
+## ✅ CREATE ROLE
+
+```sql
+CREATE ROLE FOOD_ADMIN;
+```
+
+---
+
+## ✅ GRANT
+
+```sql
+GRANT USAGE ON DATABASE FOOD_DB TO ROLE FOOD_ADMIN;
+GRANT USAGE ON SCHEMA FOOD_DB.MANAGEMENT TO ROLE FOOD_ADMIN;
+GRANT SELECT ON ALL TABLES IN SCHEMA FOOD_DB.MANAGEMENT TO ROLE FOOD_ADMIN;
+```
+
+---
+
+## ✅ REVOKE
+
+```sql
+REVOKE SELECT ON ALL TABLES IN SCHEMA FOOD_DB.MANAGEMENT FROM ROLE FOOD_ADMIN;
+```
+
+---
+
+# 5️⃣ TCL (Transaction Control Language)
+
+## ✅ BEGIN
+
+```sql
+BEGIN;
+```
+
+---
+
+## ✅ COMMIT
+
+```sql
+COMMIT;
+```
+
+---
+
+## ✅ ROLLBACK
+
+```sql
+ROLLBACK;
+```
+
+---
+
+# 6️⃣ Advanced Snowflake Commands
+
+## ✅ SHOW TABLES
+
+```sql
+SHOW TABLES;
+```
+
+---
+
+## ✅ DESCRIBE TABLE
+
+```sql
+DESC TABLE ORDERS;
+```
+
+---
+
+## ✅ CLONE (Snowflake Special)
+
+```sql
+CREATE TABLE ORDERS_BACKUP CLONE ORDERS;
+```
+
+---
+
+## ✅ TIME TRAVEL
+
+```sql
+SELECT *
+FROM ORDERS
+AT (TIMESTAMP => '2026-02-20 10:00:00');
+```
+
+---
+
+# 🎯 This Covers
+
+✔ Database creation
+✔ Schema usage
+✔ Table creation
+✔ Insert / Update / Delete
+✔ Joins
+✔ Grouping
+✔ Views
+✔ Roles & Permissions
+✔ Transactions
+✔ Snowflake-specific features
+
+---
+
+If you want next level, I can give:
+
+* 🔥 Complete 200-row data script
+* 🔥 Real interview SQL questions from this project
+* 🔥 Stored procedures + tasks
+* 🔥 End-to-end Snowflake project architecture
+
+Tell me what level you want 🚀
