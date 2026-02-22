@@ -1,0 +1,237 @@
+Perfect 🔥 Let’s do a **Full Snowflake Time Travel Demo Project** step-by-step using your Food Distribution system.
+
+This will cover:
+
+* ✅ Time Travel using OFFSET
+* ✅ Time Travel using TIMESTAMP
+* ✅ BEFORE (STATEMENT)
+* ✅ UNDROP TABLE
+* ✅ CLONE at previous time
+* ✅ Interview concepts
+
+---
+
+# 🏗 PROJECT: Time Travel Demo on ORDERS Table
+
+---
+
+# ✅ Step 1: Create Demo Table
+
+```sql
+CREATE OR REPLACE TABLE ORDERS_TT (
+    ORDER_ID INT,
+    CUSTOMER_NAME STRING,
+    STATUS STRING,
+    TOTAL_AMOUNT NUMBER(10,2)
+);
+```
+
+---
+
+# ✅ Step 2: Insert Initial Data
+
+```sql
+INSERT INTO ORDERS_TT VALUES
+(1, 'Ravi', 'Pending', 1200),
+(2, 'Sita', 'Delivered', 2500),
+(3, 'Arun', 'Pending', 1800);
+```
+
+Check data:
+
+```sql
+SELECT * FROM ORDERS_TT;
+```
+
+---
+
+# ✅ Step 3: Update Some Data
+
+```sql
+UPDATE ORDERS_TT
+SET STATUS = 'Delivered'
+WHERE ORDER_ID = 1;
+```
+
+---
+
+# ✅ Step 4: Delete Some Data
+
+```sql
+DELETE FROM ORDERS_TT
+WHERE ORDER_ID = 3;
+```
+
+Now table has changed.
+
+---
+
+# 🔥 Time Travel Methods
+
+---
+
+# 1️⃣ Method 1: Using OFFSET (Go Back Few Minutes)
+
+View table 5 minutes ago:
+
+```sql
+SELECT *
+FROM ORDERS_TT
+AT (OFFSET => -60*5);
+```
+
+👉 This shows table state 5 minutes earlier.
+
+---
+
+# 2️⃣ Method 2: Using TIMESTAMP
+
+```sql
+SELECT *
+FROM ORDERS_TT
+AT (TIMESTAMP => CURRENT_TIMESTAMP() - INTERVAL '5 MINUTE');
+```
+
+---
+
+# 3️⃣ Method 3: BEFORE (STATEMENT)
+
+Recover data before last DELETE:
+
+```sql
+SELECT *
+FROM ORDERS_TT
+BEFORE (STATEMENT => LAST_QUERY_ID());
+```
+
+Or use specific query ID:
+
+```sql
+SELECT *
+FROM ORDERS_TT
+BEFORE (STATEMENT => '01b12345-0000-0000-0000-000000000000');
+```
+
+---
+
+# 🔥 Restore Deleted Data
+
+Suppose you deleted rows accidentally.
+
+Recover them:
+
+```sql
+INSERT INTO ORDERS_TT
+SELECT *
+FROM ORDERS_TT
+AT (OFFSET => -60*5);
+```
+
+---
+
+# 🔥 UNDROP TABLE (Very Important)
+
+If you drop table:
+
+```sql
+DROP TABLE ORDERS_TT;
+```
+
+Recover it:
+
+```sql
+UNDROP TABLE ORDERS_TT;
+```
+
+Works only within retention period.
+
+---
+
+# 🔥 CLONE Table at Previous Time (Powerful Feature)
+
+```sql
+CREATE TABLE ORDERS_CLONE
+CLONE ORDERS_TT
+AT (OFFSET => -60*5);
+```
+
+Now you have snapshot of old data.
+
+---
+
+# 🧠 How to Check Retention Period
+
+```sql
+SHOW PARAMETERS LIKE 'DATA_RETENTION_TIME_IN_DAYS'
+IN TABLE ORDERS_TT;
+```
+
+Typical:
+
+| Edition    | Retention |
+| ---------- | --------- |
+| Standard   | 1 day     |
+| Enterprise | 1–90 days |
+
+---
+
+# ⚡ Important Interview Concepts
+
+### 1️⃣ What is Time Travel?
+
+Allows querying historical data within retention period.
+
+### 2️⃣ What is Fail-safe?
+
+Additional 7 days after Time Travel.
+❌ Not accessible by users.
+Only Snowflake support.
+
+### 3️⃣ Does Time Travel Increase Storage?
+
+Yes — Snowflake stores micro-partition versions.
+
+### 4️⃣ Can We Time Travel Schema & Database?
+
+✅ Yes
+
+Example:
+
+```sql
+UNDROP DATABASE FOOD_DISTRIBUTION_DB;
+```
+
+---
+
+# 🎯 Real Business Use Case
+
+In Food Distribution:
+
+* Accidentally deleted 10,000 orders
+* Update mistake changed all status to Cancelled
+* Dropped entire table
+
+👉 Time Travel saves production data.
+
+---
+
+# 🚀 Advanced Practice Challenge
+
+Try this:
+
+1️⃣ Insert 10 rows
+2️⃣ Update all to Delivered
+3️⃣ Delete 5 rows
+4️⃣ Recover only deleted rows using BEFORE
+
+---
+
+If you want next level, I can show:
+
+* 🔥 Time Travel on Schema
+* 🔥 Time Travel on Database
+* 🔥 Zero-copy cloning architecture
+* 🔥 Production recovery scenario
+* 🔥 Snowflake certification-level questions
+
+Tell me your next level 🚀
